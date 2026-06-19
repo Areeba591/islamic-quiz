@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Islamic Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600&family=Reem+Kufi:wght@400;500&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+
+  :root{
+    --emerald-deep:#06241b;
+    --emerald:#0c3a29;
+    --emerald-light:#155f41;
+    --gold:#d4af37;
+    --gold-bright:#f3da8b;
+    --gold-dim:rgba(212,175,55,0.35);
+    --ivory:#f7f2e6;
+    --ivory-dim:rgba(247,242,230,0.62);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(212,175,55,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 100%, rgba(21,95,65,0.35), transparent 60%),
+      linear-gradient(160deg, var(--emerald-deep), #081f17 55%, var(--emerald-deep));
+    font-family:'Poppins', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px 18px;
+    position:relative;
+    overflow-x:hidden;
+    color:var(--ivory);
+  }
+
+  /* faint geometric star lattice watermark */
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:0.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84'%3E%3Cpath d='M42 6 L50 34 L78 42 L50 50 L42 78 L34 50 L6 42 L34 34 Z' fill='none' stroke='%23d4af37' stroke-width='0.5' opacity='0.16'/%3E%3C/svg%3E");
+    background-size:84px 84px;
+  }
+
+  .twinkle{
+    position:fixed;
+    width:3px;height:3px;
+    border-radius:50%;
+    background:var(--gold-bright);
+    opacity:0;
+    pointer-events:none;
+    animation:twinkle 4.5s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{opacity:0;}
+    50%{opacity:0.85;}
+  }
+
+  .container{
+    width:100%;
+    max-width:600px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* ---------- ARCH CARD (signature element) ---------- */
+  .arch-card{
+    position:relative;
+    background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border:1px solid var(--gold-dim);
+    border-top:none;
+    border-radius:14px 14px 18px 18px;
+    padding-top:64px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 20px 50px rgba(0,0,0,0.35);
+  }
+
+  .arch-top{
+    position:absolute;
+    top:-1px; left:-1px; right:-1px;
+    height:88px;
+    background:linear-gradient(180deg, rgba(212,175,55,0.16), rgba(212,175,55,0.02));
+    border:1px solid var(--gold-dim);
+    border-bottom:none;
+    border-radius:200px 200px 0 0 / 88px 88px 0 0;
+  }
+
+  .arch-top::after{
+    content:'';
+    position:absolute;
+    left:50%; top:14px;
+    transform:translateX(-50%);
+    width:30px;height:30px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 2 L24 16 L38 20 L24 24 L20 38 L16 24 L2 20 L16 16 Z' fill='none' stroke='%23d4af37' stroke-width='1.4'/%3E%3C/svg%3E");
+    background-size:contain;
+    background-repeat:no-repeat;
+    opacity:0.85;
+  }
+
+  .eyebrow{
+    font-family:'Reem Kufi', sans-serif;
+    letter-spacing:3px;
+    font-size:0.7rem;
+    color:var(--gold);
+    text-transform:uppercase;
+    text-align:center;
+  }
+
+  .gold-rule{
+    width:64px;
+    height:2px;
+    margin:10px auto 0;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* ---------- START SCREEN ---------- */
+  .start-screen{ text-align:center; padding:36px 36px 44px; }
+
+  .bismillah{
+    font-family:'Amiri', serif;
+    color:var(--gold-bright);
+    font-size:1.1rem;
+    margin-bottom:18px;
+    opacity:0.9;
+  }
+
+  .start-screen h1{
+    font-family:'Amiri', serif;
+    font-size:2.5rem;
+    color:var(--ivory);
+    margin:6px 0 6px;
+    letter-spacing:0.5px;
+  }
+
+  .start-screen h1 span{ color:var(--gold); }
+
+  .start-screen p.sub{
+    color:var(--ivory-dim);
+    font-size:0.92rem;
+    margin:14px 0 36px;
+    line-height:1.6;
+  }
+
+  .stat-row{
+    display:flex;
+    justify-content:center;
+    gap:28px;
+    margin-bottom:34px;
+  }
+  .stat{ text-align:center; }
+  .stat-num{
+    font-family:'Amiri', serif;
+    font-size:1.5rem;
+    color:var(--gold-bright);
+    display:block;
+  }
+  .stat-label{
+    font-size:0.68rem;
+    color:var(--ivory-dim);
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+  .stat-divider{ width:1px; background:var(--gold-dim); }
+
+  .btn-start{
+    background:linear-gradient(135deg, var(--gold-bright), var(--gold));
+    color:var(--emerald-deep);
+    border:none;
+    padding:15px 50px;
+    border-radius:50px;
+    font-size:0.98rem;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Poppins', sans-serif;
+    letter-spacing:0.3px;
+    box-shadow:0 10px 28px rgba(212,175,55,0.25);
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-start:hover{ transform:translateY(-2px); box-shadow:0 14px 34px rgba(212,175,55,0.4); }
+  .btn-start:active{ transform:translateY(0); }
+
+  /* ---------- QUIZ SCREEN ---------- */
+  .quiz-screen{ display:none; }
+
+  .top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+    padding:0 4px;
+  }
+  .q-counter{
+    font-family:'Reem Kufi', sans-serif;
+    letter-spacing:1px;
+    color:var(--ivory-dim);
+    font-size:0.78rem;
+    text-transform:uppercase;
+  }
+  .score-badge{
+    background:rgba(212,175,55,0.12);
+    border:1px solid var(--gold-dim);
+    color:var(--gold-bright);
+    padding:5px 16px;
+    border-radius:50px;
+    font-size:0.8rem;
+    font-weight:600;
+  }
+
+  .progress-track{
+    background:rgba(255,255,255,0.07);
+    border-radius:10px;
+    height:4px;
+    margin-bottom:30px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--gold), var(--gold-bright));
+    border-radius:10px;
+    transition:width 0.45s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 0 10px rgba(212,175,55,0.6);
+  }
+
+  .question-wrap{ padding:30px 30px 8px; }
+
+  .question-text{
+    font-family:'Amiri', serif;
+    font-size:1.25rem;
+    color:var(--ivory);
+    line-height:1.65;
+    text-align:center;
+  }
+
+  .question-urdu{
+    font-family:'Noto Nastaliq Urdu', serif;
+    font-size:1.35rem;
+    color:var(--gold-bright);
+    direction:rtl;
+    text-align:center;
+    line-height:2.1;
+    display:block;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--gold-dim);
+  }
+
+  .options-wrap{ padding:24px 26px 0; }
+
+  .options-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:11px;
+    margin-bottom:22px;
+  }
+
+  .option-btn{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(247,242,230,0.16);
+    border-radius:12px;
+    padding:15px 18px;
+    color:var(--ivory-dim);
+    font-size:0.92rem;
+    cursor:pointer;
+    transition:all 0.2s;
+    font-family:'Poppins', sans-serif;
+    text-align:left;
+    position:relative;
+  }
+  .option-btn:hover:not(:disabled){
+    border-color:var(--gold);
+    background:rgba(212,175,55,0.07);
+    color:var(--ivory);
+    transform:translateX(3px);
+  }
+  .option-btn.correct{
+    background:rgba(39,174,96,0.16);
+    border-color:#3fb878;
+    color:#7be3ac;
+    animation:pulseCorrect 0.5s ease;
+  }
+  .option-btn.wrong{
+    background:rgba(220,80,70,0.16);
+    border-color:#e0695f;
+    color:#f0a39c;
+    animation:shake 0.4s ease;
+  }
+  .option-btn:disabled{ cursor:default; }
+
+  @keyframes pulseCorrect{
+    0%{ transform:scale(1); }
+    40%{ transform:scale(1.02); }
+    100%{ transform:scale(1); }
+  }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-5px); }
+    75%{ transform:translateX(5px); }
+  }
+
+  .btn-next{
+    width:100%;
+    background:linear-gradient(135deg, var(--gold-bright), var(--gold));
+    color:var(--emerald-deep);
+    border:none;
+    padding:15px;
+    border-radius:12px;
+    font-size:0.95rem;
+    font-weight:600;
+    cursor:pointer;
+    display:none;
+    margin:0 26px 26px;
+    width:calc(100% - 52px);
+    font-family:'Poppins', sans-serif;
+    transition:opacity 0.2s, transform 0.2s;
+  }
+  .btn-next:hover{ opacity:0.92; transform:translateY(-1px); }
+
+  .fade-in{ animation:fadeIn 0.4s ease; }
+  @keyframes fadeIn{
+    from{ opacity:0; transform:translateY(6px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ---------- RESULT SCREEN ---------- */
+  .result-screen{ display:none; text-align:center; padding:40px 36px 46px; }
+
+  .star-row{ display:flex; justify-content:center; gap:6px; margin-bottom:18px; }
+  .star-row span{
+    font-size:1.4rem;
+    color:rgba(212,175,55,0.25);
+  }
+  .star-row span.lit{ color:var(--gold-bright); text-shadow:0 0 12px rgba(212,175,55,0.6); }
+
+  .result-screen h2{
+    font-family:'Amiri', serif;
+    font-size:1.9rem;
+    color:var(--ivory);
+    margin-bottom:4px;
+  }
+
+  .result-score{
+    font-family:'Amiri', serif;
+    font-size:3.2rem;
+    font-weight:700;
+    color:var(--gold-bright);
+    margin:18px 0 6px;
+  }
+
+  .result-msg{
+    color:var(--ivory-dim);
+    margin-bottom:32px;
+    font-size:0.92rem;
+    line-height:1.6;
+  }
+
+  .btn-restart{
+    background:transparent;
+    color:var(--gold-bright);
+    border:1.5px solid var(--gold);
+    padding:13px 46px;
+    border-radius:50px;
+    font-size:0.95rem;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Poppins', sans-serif;
+    transition:all 0.2s;
+  }
+  .btn-restart:hover{ background:rgba(212,175,55,0.1); transform:translateY(-2px); }
+
+  @media (max-width:480px){
+    .start-screen{ padding:32px 22px 38px; }
+    .question-wrap{ padding:26px 20px 6px; }
+    .options-wrap{ padding:20px 18px 0; }
+    .btn-next{ margin:0 18px 22px; width:calc(100% - 36px); }
+    .start-screen h1{ font-size:2.1rem; }
+    .stat-row{ gap:20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- START SCREEN -->
+  <div class="arch-card">
+    <div class="arch-top"></div>
+    <div class="start-screen" id="startScreen">
+      <p class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+      <h1>Islamic <span>Quiz</span></h1>
+      <p class="sub">Test your knowledge of Islam across faith, prophets, and worship — twenty questions, presented in English and Urdu.</p>
+      <div class="stat-row">
+        <div class="stat">
+          <span class="stat-num">20</span>
+          <span class="stat-label">Questions</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">EN</span>
+          <span class="stat-label">+ Urdu</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">∞</span>
+          <span class="stat-label">Attempts</span>
+        </div>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">Begin Quiz</button>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="quiz-screen" id="quizScreen">
+    <div class="top-bar">
+      <span class="q-counter" id="qCounter">Question 1 / 20</span>
+      <span class="score-badge">Score <span id="scoreDisplay">0</span></span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:5%"></div>
+    </div>
+
+    <div class="arch-card">
+      <div class="arch-top"></div>
+      <div class="question-wrap">
+        <p class="eyebrow" id="qEyebrow">Question 01</p>
+        <p class="question-text" id="questionText" style="margin-top:10px;"></p>
+        <span class="question-urdu" id="questionUrdu"></span>
+      </div>
+      <div class="options-wrap">
+        <div class="options-grid" id="optionsGrid"></div>
+        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="arch-card" id="resultCard" style="display:none;">
+    <div class="arch-top"></div>
+    <div class="result-screen" id="resultScreen">
+      <div class="star-row" id="starRow"></div>
+      <h2 id="resultTitle">Quiz Complete!</h2>
+      <div class="gold-rule"></div>
+      <div class="result-score" id="resultScore">0/20</div>
+      <p class="result-msg" id="resultMsg"></p>
+      <button class="btn-restart" onclick="restartQuiz()">Try Again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // scattered ambient twinkle stars
+  (function(){
+    const n = window.innerWidth < 520 ? 10 : 18;
+    for(let i=0;i<n;i++){
+      const t = document.createElement('div');
+      t.className = 'twinkle';
+      t.style.left = Math.random()*100 + 'vw';
+      t.style.top = Math.random()*100 + 'vh';
+      t.style.animationDelay = (Math.random()*4) + 's';
+      document.body.appendChild(t);
+    }
+  })();
+
+  const questions = [
+    {
+      q: "How many times is Salah (prayer) obligatory per day?",
+      urdu: "نماز روزانہ کتنی بار فرض ہے؟",
+      options: ["3", "4", "5", "7"],
+      answer: "5"
+    },
+    {
+      q: "What is the first pillar of Islam?",
+      urdu: "اسلام کا پہلا رکن کیا ہے؟",
+      options: ["Salah", "Zakat", "Sawm", "Shahada"],
+      answer: "Shahada"
+    },
+    {
+      q: "In which month do Muslims fast?",
+      urdu: "مسلمان کس مہینے میں روزے رکھتے ہیں؟",
+      options: ["Muharram", "Rajab", "Ramadan", "Shaban"],
+      answer: "Ramadan"
+    },
+    {
+      q: "How many Surahs are in the Holy Quran?",
+      urdu: "قرآن پاک میں کتنی سورتیں ہیں؟",
+      options: ["99", "112", "114", "120"],
+      answer: "114"
+    },
+    {
+      q: "Which city is known as the birthplace of Prophet Muhammad (PBUH)?",
+      urdu: "حضرت محمد ﷺ کی پیدائش کس شہر میں ہوئی؟",
+      options: ["Madinah", "Jerusalem", "Makkah", "Taif"],
+      answer: "Makkah"
+    },
+    {
+      q: "What is the Islamic term for the annual pilgrimage to Makkah?",
+      urdu: "مکہ کے سالانہ سفر کو اسلام میں کیا کہتے ہیں؟",
+      options: ["Umrah", "Hajj", "Ziyarat", "Tawaf"],
+      answer: "Hajj"
+    },
+    {
+      q: "How many angels are believed to record a person's deeds?",
+      urdu: "انسان کے اعمال لکھنے والے فرشتے کتنے ہیں؟",
+      options: ["1", "2", "4", "10"],
+      answer: "2"
+    },
+    {
+      q: "What is the meaning of 'Zakat'?",
+      urdu: "زکوٰۃ کا مطلب کیا ہے؟",
+      options: ["Prayer", "Fasting", "Purification", "Pilgrimage"],
+      answer: "Purification"
+    },
+    {
+      q: "Which prophet is known as 'Khalilullah' (Friend of Allah)?",
+      urdu: "کون سے نبی کو 'خلیل اللہ' کہا جاتا ہے؟",
+      options: ["Musa (AS)", "Isa (AS)", "Ibrahim (AS)", "Nuh (AS)"],
+      answer: "Ibrahim (AS)"
+    },
+    {
+      q: "What is the direction Muslims face during prayer?",
+      urdu: "نماز میں مسلمان کس سمت منہ کرتے ہیں؟",
+      options: ["East", "West", "Qibla (Makkah)", "North"],
+      answer: "Qibla (Makkah)"
+    },
+    {
+      q: "How many pillars of Islam are there?",
+      urdu: "اسلام کے کتنے ارکان ہیں؟",
+      options: ["3", "4", "5", "6"],
+      answer: "5"
+    },
+    {
+      q: "Which is the longest Surah in the Holy Quran?",
+      urdu: "قرآن پاک کی سب سے لمبی سورت کون سی ہے؟",
+      options: ["Surah Al-Imran", "Surah Al-Baqarah", "Surah An-Nisa", "Surah Al-Maidah"],
+      answer: "Surah Al-Baqarah"
+    },
+    {
+      q: "What is the name of the night journey of Prophet Muhammad (PBUH)?",
+      urdu: "نبی کریم ﷺ کے رات کے سفر کو کیا کہتے ہیں؟",
+      options: ["Miraj", "Isra", "Isra wal Miraj", "Hijra"],
+      answer: "Isra wal Miraj"
+    },
+    {
+      q: "Which angel brought revelation to Prophet Muhammad (PBUH)?",
+      urdu: "حضرت محمد ﷺ پر وحی کون سا فرشتہ لاتا تھا؟",
+      options: ["Mikail (AS)", "Israfil (AS)", "Jibrail (AS)", "Izrail (AS)"],
+      answer: "Jibrail (AS)"
+    },
+    {
+      q: "In which city did Prophet Muhammad (PBUH) migrate to?",
+      urdu: "نبی کریم ﷺ نے ہجرت کر کے کس شہر میں تشریف لے گئے؟",
+      options: ["Taif", "Jerusalem", "Makkah", "Madinah"],
+      answer: "Madinah"
+    },
+    {
+      q: "How many Rakats are in Fajr prayer?",
+      urdu: "فجر کی نماز میں کتنی رکعتیں ہیں؟",
+      options: ["2", "3", "4", "5"],
+      answer: "2"
+    },
+    {
+      q: "Which prophet built the Kaaba?",
+      urdu: "خانہ کعبہ کس نبی نے تعمیر کیا؟",
+      options: ["Nuh (AS)", "Musa (AS)", "Ibrahim (AS)", "Ismail (AS)"],
+      answer: "Ibrahim (AS)"
+    },
+    {
+      q: "What is the holy book of Islam?",
+      urdu: "اسلام کی مقدس کتاب کون سی ہے؟",
+      options: ["Injeel", "Tawrat", "Quran", "Zabur"],
+      answer: "Quran"
+    },
+    {
+      q: "How many times should a Muslim perform Hajj in a lifetime?",
+      urdu: "مسلمان پر زندگی میں کتنی بار حج فرض ہے؟",
+      options: ["Every year", "Twice", "Once", "Never"],
+      answer: "Once"
+    },
+    {
+      q: "What does 'Bismillah' mean?",
+      urdu: "بسم اللہ کا مطلب کیا ہے؟",
+      options: ["Praise be to Allah", "In the name of Allah", "Allah is great", "Peace be upon you"],
+      answer: "In the name of Allah"
+    }
+  ];
+
+  let current = 0;
+  let score = 0;
+  let answered = false;
+
+  function startQuiz(){
+    document.querySelector('.arch-card').style.display = 'none';
+    document.getElementById('quizScreen').style.display = 'block';
+    loadQuestion();
+  }
+
+  function loadQuestion(){
+    answered = false;
+    document.getElementById('nextBtn').style.display = 'none';
+
+    const q = questions[current];
+    const qNum = current + 1;
+    document.getElementById('qCounter').textContent = `Question ${qNum} / ${questions.length}`;
+    document.getElementById('qEyebrow').textContent = `Question ${String(qNum).padStart(2,'0')}`;
+    document.getElementById('progressFill').style.width = `${(qNum / questions.length) * 100}%`;
+    document.getElementById('questionText').textContent = q.q;
+    document.getElementById('questionUrdu').textContent = q.urdu;
+
+    const grid = document.getElementById('optionsGrid');
+    grid.innerHTML = '';
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn fade-in';
+      btn.textContent = opt;
+      btn.onclick = () => selectAnswer(opt, btn);
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(selected, btn){
+    if (answered) return;
+    answered = true;
+
+    const correct = questions[current].answer;
+    const allBtns = document.querySelectorAll('.option-btn');
+
+    allBtns.forEach(b => {
+      b.disabled = true;
+      if (b.textContent === correct) b.classList.add('correct');
+    });
+
+    if (selected === correct){
+      score++;
+      document.getElementById('scoreDisplay').textContent = score;
+    } else {
+      btn.classList.add('wrong');
+    }
+
+    document.getElementById('nextBtn').style.display = 'block';
+    if (current === questions.length - 1){
+      document.getElementById('nextBtn').textContent = 'See Result 🏆';
+    }
+  }
+
+  function nextQuestion(){
+    current++;
+    if (current < questions.length){
+      loadQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult(){
+    document.getElementById('quizScreen').style.display = 'none';
+    const card = document.getElementById('resultCard');
+    card.style.display = 'block';
+
+    document.getElementById('resultScore').textContent = `${score}/${questions.length}`;
+
+    const pct = score / questions.length;
+    let emoji, title, msg, stars;
+
+    if (score === questions.length){
+      stars = 5; title = 'Masha Allah!'; msg = 'Perfect score! Your Islamic knowledge is excellent.';
+    } else if (pct >= 0.7){
+      stars = 4; title = 'Well Done!'; msg = 'Great effort! Keep learning more about Islam.';
+    } else if (pct >= 0.4){
+      stars = 3; title = 'Keep Learning!'; msg = 'Good try! Read more and try again.';
+    } else {
+      stars = 2; title = 'Keep Going!'; msg = "Don't give up! Every question is a chance to learn.";
+    }
+
+    const starRow = document.getElementById('starRow');
+    starRow.innerHTML = '';
+    for(let i=1;i<=5;i++){
+      const s = document.createElement('span');
+      s.textContent = '★';
+      if (i <= stars) s.classList.add('lit');
+      starRow.appendChild(s);
+    }
+
+    document.getElementById('resultTitle').textContent = title;
+    document.getElementById('resultMsg').textContent = msg;
+  }
+
+  function restartQuiz(){
+    current = 0;
+    score = 0;
+    document.getElementById('scoreDisplay').textContent = 0;
+    document.getElementById('resultCard').style.display = 'none';
+    document.getElementById('quizScreen').style.display = 'block';
+    document.getElementById('nextBtn').textContent = 'Next Question →';
+    loadQuestion();
+  }
+</script>
+
+</body>
+</html>
